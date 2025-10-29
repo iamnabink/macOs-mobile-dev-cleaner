@@ -1,8 +1,10 @@
-# AppBuild Dev Cleaner - Mobile Development Artifact Cleaner
+# MacOS AppBuild Dev Cleaner - Mobile Development Artifact Cleaner
 
 <div align="center">
-  <img src="assets/images/screenshot1.png" alt="App Screenshot 1" width="45%">
-  <img src="assets/images/screenshot2.png" alt="App Screenshot 2" width="45%">
+  <img src="assets/images/screenshot1.png" alt="App Screenshot 1" width="25%">
+  <img src="assets/images/screenshot2.png" alt="App Screenshot 2" width="25%">
+    <img src="assets/images/screenshot3.png" alt="App Screenshot 3" width="25%">
+  <img src="assets/images/screenshot4.png" alt="App Screenshot 4" width="25%">
 </div>
 
 A powerful macOS desktop application built with Flutter that helps mobile developers clean up unnecessary build artifacts from their system to free up disk space.
