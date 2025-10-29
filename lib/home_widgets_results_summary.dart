@@ -1,0 +1,281 @@
+part of 'home.dart';
+
+extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
+  Widget _buildSummaryCard() {
+    if (_scanResults.isEmpty && !_isScanning) {
+      return Container(
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              _hasPermission ? CupertinoIcons.folder : CupertinoIcons.lock,
+              size: 64,
+              color: _hasPermission
+                  ? CupertinoColors.systemBlue.withOpacity(0.6)
+                  : CupertinoColors.systemOrange.withOpacity(0.6),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _hasPermission
+                  ? AppConstants.noScanResultsYet
+                  : AppConstants.permissionRequired,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _hasPermission
+                  ? AppConstants.clickToScanMessage
+                  : AppConstants.grantPermissionMessage,
+              style: const TextStyle(
+                fontSize: 14,
+                color: CupertinoColors.secondaryLabel,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            CupertinoButton.filled(
+              onPressed: _requestFileAccess,
+              color: _hasPermission
+                  ? CupertinoColors.systemBlue
+                  : CupertinoColors.systemOrange,
+              child: Text(
+                _selectedPath.isEmpty
+                    ? AppConstants.selectDirectoryMessage
+                    : 'Scan Path: $_selectedPath',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ),
+            if (!_hasPermission) ...[
+              const SizedBox(height: 16),
+              CupertinoButton.filled(
+                onPressed: _requestFileAccess,
+                color: CupertinoColors.systemOrange,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(CupertinoIcons.folder, size: 16),
+                    const SizedBox(width: 8),
+                    const Text(AppConstants.selectDirectoryButtonText),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    if (_scanResults.isEmpty) return const SizedBox.shrink();
+
+    final totalSize = _scanResults.fold<int>(
+      0,
+      (sum, result) => sum + result.size,
+    );
+    final apkCount =
+        _scanResults.where((r) => r.type == AppConstants.apkIndicator).length;
+    final aabCount =
+        _scanResults.where((r) => r.type == AppConstants.aabIndicator).length;
+    final ipaCount =
+        _scanResults.where((r) => r.type == AppConstants.ipaIndicator).length;
+    final flutterBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.flutterBuildIndicator)
+        .length;
+    final reactNativeBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.reactNativeBuildIndicator)
+        .length;
+    final androidBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.androidBuildIndicator)
+        .length;
+    final iosBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.iosBuildIndicator)
+        .length;
+    final nodeModulesCount = _scanResults
+        .where((r) => r.type == AppConstants.nodeModulesIndicator)
+        .length;
+    final archivesCount = _scanResults
+        .where((r) => r.type == AppConstants.archivesIndicator)
+        .length;
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              'Scan Results',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (apkCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.apkType,
+                        apkCount,
+                        CupertinoIcons.device_phone_portrait,
+                        CupertinoColors.systemGreen,
+                      ),
+                    if (aabCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.aabType,
+                        aabCount,
+                        CupertinoIcons.square_stack,
+                        CupertinoColors.systemBlue,
+                      ),
+                    if (ipaCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.ipaType,
+                        ipaCount,
+                        CupertinoIcons.device_phone_portrait,
+                        CupertinoColors.systemPurple,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (flutterBuildCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.flutterBuildType,
+                        flutterBuildCount,
+                        CupertinoIcons.hammer,
+                        CupertinoColors.systemBlue,
+                      ),
+                    if (reactNativeBuildCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.reactNativeBuildType,
+                        reactNativeBuildCount,
+                        CupertinoIcons.hammer,
+                        CupertinoColors.activeBlue,
+                      ),
+                    if (androidBuildCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.androidBuildType,
+                        androidBuildCount,
+                        CupertinoIcons.hammer,
+                        CupertinoColors.systemGreen,
+                      ),
+                    if (iosBuildCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.iosBuildType,
+                        iosBuildCount,
+                        CupertinoIcons.hammer,
+                        CupertinoColors.systemGrey,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (nodeModulesCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.nodeModulesType,
+                        nodeModulesCount,
+                        CupertinoIcons.folder,
+                        CupertinoColors.systemOrange,
+                      ),
+                    if (archivesCount > 0)
+                      _buildSummaryItem(
+                        AppConstants.archivesType,
+                        archivesCount,
+                        CupertinoIcons.archivebox,
+                        CupertinoColors.systemBrown,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemBlue,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    CupertinoIcons.delete_solid,
+                    size: 28,
+                    color: CupertinoColors.white,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '${AppConstants.spaceToFreeUp} ${_formatFileSize(totalSize)}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: CupertinoColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryItem(
+    String label,
+    int count,
+    IconData icon,
+    Color color,
+  ) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 32, color: color),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          count.toString(),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: CupertinoColors.secondaryLabel,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
