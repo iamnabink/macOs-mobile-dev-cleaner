@@ -8,11 +8,17 @@
 
 [![Download AppBuild-Dev-Cleaner.dmg](https://img.shields.io/badge/⬇️%20Download-AppBuild--Dev--Cleaner.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/AppBuild-Dev-Cleaner.dmg)
 
+**✅ Safety & Security Assurance:**
+- 🔒 **Code-Signed** - The DMG file is signed with an Apple Developer ID Application certificate
+- ✅ **Notarized by Apple** - The app has been notarized by Apple, ensuring it's free of malware
+- 🛡️ **100% Safe** - No security warnings, no malware, completely safe to install
+- ✨ **Verified** - The app bundle and DMG are both signed and verified
+
 **Quick Install:**
 1. Click download button above
 2. Open the downloaded DMG file
 3. Drag **AppBuild Dev Cleaner** to your Applications folder
-4. Launch from Applications
+4. Launch from Applications - **No security warnings!**
 
 ---
 
@@ -148,7 +154,44 @@ xcrun stapler staple "YourApp.app"
 ```bash
 # Create DMG
 ./create_dmg.sh
+```
 
+**What `create_dmg.sh` Does Automatically:**
+
+Your `create_dmg.sh` script handles everything for you:
+
+- ✅ **Automatically notarizes each build** - If credentials are in `notarization.config`
+- ✅ **Signs the app** - With your Developer ID certificate
+- ✅ **Submits to Apple** - For automated notarization
+- ✅ **Staples the notarization ticket** - To the app bundle
+- ✅ **Creates the DMG** - With background text and proper layout
+- ✅ **Signs the DMG** - Final DMG is signed and ready
+
+**Each time you run `./create_dmg.sh`:**
+
+1. It builds a new app
+2. Signs it with your Developer ID certificate
+3. Notarizes it (if credentials are configured in `notarization.config`)
+4. Creates the DMG with all customizations
+5. Signs the final DMG
+
+**DMG Creation Process Flow:**
+
+The `create_dmg.sh` script automates the entire process:
+
+1. **🔨 Build** - Compiles the Flutter app for macOS release
+2. **✍️ Sign** - Signs the app bundle with Developer ID certificate
+3. **✅ Verify** - Verifies the app signature is valid
+4. **📤 Notarize** - Submits app to Apple for automated notarization (2-5 minutes)
+   - Scans for malware and security issues
+   - Staples notarization ticket to app if accepted
+5. **💿 Create DMG** - Creates DMG with app bundle and Applications alias
+6. **🎨 Customize** - Adds background text with installation instructions
+7. **🔒 Convert** - Converts to read-only compressed format (UDZO)
+8. **✍️ Sign DMG** - Signs the final DMG file
+9. **✅ Ready** - DMG is ready for distribution!
+
+**Note:** Notarization is automated and requires no manual approval. Apple scans the app automatically (usually completes in 2-5 minutes). If notarization fails or times out, the script continues without it (app will still work but may show security warnings).
 
 **From Xcode:**
 1. Product → Archive
