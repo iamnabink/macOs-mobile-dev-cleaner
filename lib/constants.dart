@@ -1,6 +1,6 @@
 class AppConstants {
   // App Information
-  static const String appName = 'AppBuild Dev Cleaner';
+  static const String appName = 'Broomie';
   static const String appDescription =
       'Clean up mobile development artifacts for Flutter and React Native developers';
 
@@ -69,7 +69,7 @@ class AppConstants {
   static const String failedToClean = 'Failed to clean';
 
   // About Dialog
-  static const String aboutTitle = 'About AppBuild Dev Cleaner';
+  static const String aboutTitle = 'About Broomie';
   static const String aboutContent =
       'This app helps mobile developers clean up unnecessary build artifacts:';
   static const String apkFiles = '• APK files (Android packages)';

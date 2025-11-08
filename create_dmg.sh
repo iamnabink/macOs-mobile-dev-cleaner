@@ -10,6 +10,17 @@ else
     echo "   Create notarization.config with APPLE_ID, APPLE_APP_PASSWORD, and TEAM_ID"
 fi
 
+# Extract version from pubspec.yaml
+VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
+if [ -z "$VERSION" ]; then
+    VERSION="unknown"
+    echo "⚠️  Could not extract version from pubspec.yaml, using 'unknown'"
+else
+    # Replace + with - for filename compatibility
+    VERSION_FOR_FILENAME=$(echo "$VERSION" | sed 's/+/-/g')
+    echo "📋 Version: $VERSION"
+fi
+
 # Clean previous builds
 flutter clean
 
@@ -20,7 +31,7 @@ flutter pub get
 flutter build macos --release
 
 # Check if build was successful
-APP_NAME="AppBuild Dev Cleaner"
+APP_NAME="Broomie"
 APP_BUNDLE="$APP_NAME.app"
 BUILD_PATH="build/macos/Build/Products/Release/$APP_BUNDLE"
 
@@ -133,100 +144,125 @@ fi
 # TEAM_ID should already be set from config file or extracted from project above
 
 if [ -n "$APPLE_ID" ] && [ -n "$APPLE_APP_PASSWORD" ] && [ -n "$TEAM_ID" ]; then
-    echo "📤 Starting notarization process..."
-    
     # Check if using Developer ID certificate (required for notarization)
     if echo "$SIGNING_IDENTITY" | grep -q "Developer ID Application"; then
-        echo "✅ Using Developer ID certificate - proceeding with notarization"
+        echo "✅ Using Developer ID certificate - notarization is available"
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📤 Notarization Option"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "Would you like to notarize the app with Apple?"
+        echo "This will take 2-5 minutes but ensures the app won't show security warnings."
+        echo ""
+        echo -n "Notarize? (y/n) [y]: "
+        read -r NOTARIZE_RESPONSE
         
-        # Create ZIP for notarization
-        ZIP_PATH=$(mktemp -t "AppBuild-Dev-Cleaner-XXXXXX.zip")
-        echo "📦 Creating ZIP for notarization..."
-        ditto -c -k --keepParent "$STAGING_DIR/$APP_BUNDLE" "$ZIP_PATH"
-        
-        # Submit for notarization
-        echo "📤 Submitting to Apple for notarization..."
-        echo "⏳ This may take 2-5 minutes. Please wait..."
-        
-        # Submit without --wait first to get the submission ID
-        SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
-            --apple-id "$APPLE_ID" \
-            --team-id "$TEAM_ID" \
-            --password "$APPLE_APP_PASSWORD" 2>&1)
-        
-        if [ $? -ne 0 ]; then
-            echo "❌ Failed to submit for notarization!"
-            echo "$SUBMIT_OUTPUT"
-            echo "⚠️  Continuing without notarization - app will show security warning"
-            rm -f "$ZIP_PATH"
-        else
-            # Extract submission ID if available
-            SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep -i "id:" | head -1 | awk '{print $NF}' | tr -d '[:space:]')
-            
-            if [ -n "$SUBMISSION_ID" ]; then
-                echo "✅ Submission ID: $SUBMISSION_ID"
-                echo "⏳ Waiting for notarization to complete (this may take 2-5 minutes)..."
-                echo "💡 Tip: You can press Ctrl+C to skip notarization and continue"
-                
-                # Wait for notarization with progress (with timeout handling)
-                NOTARIZATION_OUTPUT=$(timeout 600 xcrun notarytool wait "$SUBMISSION_ID" \
-                    --apple-id "$APPLE_ID" \
-                    --team-id "$TEAM_ID" \
-                    --password "$APPLE_APP_PASSWORD" 2>&1) || NOTARIZATION_TIMEOUT=1
-            else
-                # Fallback: use --wait flag
-                echo "⏳ Waiting for notarization to complete (this may take 2-5 minutes)..."
-                echo "💡 Tip: You can press Ctrl+C to skip notarization and continue"
-                
-                # Use timeout if available, otherwise just wait
-                if command -v timeout &> /dev/null; then
-                    NOTARIZATION_OUTPUT=$(timeout 600 xcrun notarytool submit "$ZIP_PATH" \
-                        --apple-id "$APPLE_ID" \
-                        --team-id "$TEAM_ID" \
-                        --password "$APPLE_APP_PASSWORD" \
-                        --wait 2>&1) || NOTARIZATION_TIMEOUT=1
-                else
-                    NOTARIZATION_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
-                        --apple-id "$APPLE_ID" \
-                        --team-id "$TEAM_ID" \
-                        --password "$APPLE_APP_PASSWORD" \
-                        --wait 2>&1)
-                fi
-            fi
-            
-            # Handle timeout
-            if [ -n "$NOTARIZATION_TIMEOUT" ]; then
-                echo "⏱️  Notarization timeout (10 minutes) - continuing without notarization"
-                echo "⚠️  You can check notarization status later with: xcrun notarytool history"
-                NOTARIZATION_OUTPUT=""
-            fi
-            
-            if echo "$NOTARIZATION_OUTPUT" | grep -qi "status: Accepted\|accepted"; then
-                echo "✅ Notarization successful!"
-                
-                # Staple the notarization ticket to the app
-                echo "📎 Stapling notarization ticket..."
-                xcrun stapler staple "$STAGING_DIR/$APP_BUNDLE"
-                
-                # Verify stapling
-                if xcrun stapler validate "$STAGING_DIR/$APP_BUNDLE" 2>&1 | grep -q "validated"; then
-                    echo "✅ Notarization ticket stapled successfully!"
-                else
-                    echo "⚠️  Warning: Could not verify stapling, but notarization was accepted"
-                fi
-            elif echo "$NOTARIZATION_OUTPUT" | grep -qi "status: Invalid\|invalid"; then
-                echo "❌ Notarization failed - Invalid!"
-                echo "$NOTARIZATION_OUTPUT"
-                echo "⚠️  Continuing without notarization - app will show security warning"
-            else
-                echo "⚠️  Notarization status unclear. Output:"
-                echo "$NOTARIZATION_OUTPUT"
-                echo "⚠️  Continuing - you may need to check notarization status manually"
-            fi
+        # Default to 'y' if empty
+        if [ -z "$NOTARIZE_RESPONSE" ]; then
+            NOTARIZE_RESPONSE="y"
         fi
         
-        # Clean up ZIP
-        rm -f "$ZIP_PATH"
+        # Convert to lowercase
+        NOTARIZE_RESPONSE=$(echo "$NOTARIZE_RESPONSE" | tr '[:upper:]' '[:lower:]')
+        
+        if [ "$NOTARIZE_RESPONSE" = "y" ] || [ "$NOTARIZE_RESPONSE" = "yes" ]; then
+            echo ""
+            echo "📤 Starting notarization process..."
+            
+            # Create ZIP for notarization with version
+            ZIP_PATH=$(mktemp -t "Broomie-${VERSION_FOR_FILENAME}-XXXXXX.zip")
+            echo "📦 Creating ZIP for notarization: $(basename "$ZIP_PATH")"
+            ditto -c -k --keepParent "$STAGING_DIR/$APP_BUNDLE" "$ZIP_PATH"
+            
+            # Submit for notarization
+            echo "📤 Submitting to Apple for notarization..."
+            echo "⏳ This may take 2-5 minutes. Please wait..."
+            
+            # Submit without --wait first to get the submission ID
+            SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
+                --apple-id "$APPLE_ID" \
+                --team-id "$TEAM_ID" \
+                --password "$APPLE_APP_PASSWORD" 2>&1)
+            
+            if [ $? -ne 0 ]; then
+                echo "❌ Failed to submit for notarization!"
+                echo "$SUBMIT_OUTPUT"
+                echo "⚠️  Continuing without notarization - app will show security warning"
+                rm -f "$ZIP_PATH"
+            else
+                # Extract submission ID if available
+                SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep -i "id:" | head -1 | awk '{print $NF}' | tr -d '[:space:]')
+                
+                if [ -n "$SUBMISSION_ID" ]; then
+                    echo "✅ Submission ID: $SUBMISSION_ID"
+                    echo "⏳ Waiting for notarization to complete (this may take 2-5 minutes)..."
+                    echo "💡 Tip: You can press Ctrl+C to skip notarization and continue"
+                    
+                    # Wait for notarization with progress (with timeout handling)
+                    NOTARIZATION_OUTPUT=$(timeout 600 xcrun notarytool wait "$SUBMISSION_ID" \
+                        --apple-id "$APPLE_ID" \
+                        --team-id "$TEAM_ID" \
+                        --password "$APPLE_APP_PASSWORD" 2>&1) || NOTARIZATION_TIMEOUT=1
+                else
+                    # Fallback: use --wait flag
+                    echo "⏳ Waiting for notarization to complete (this may take 2-5 minutes)..."
+                    echo "💡 Tip: You can press Ctrl+C to skip notarization and continue"
+                    
+                    # Use timeout if available, otherwise just wait
+                    if command -v timeout &> /dev/null; then
+                        NOTARIZATION_OUTPUT=$(timeout 600 xcrun notarytool submit "$ZIP_PATH" \
+                            --apple-id "$APPLE_ID" \
+                            --team-id "$TEAM_ID" \
+                            --password "$APPLE_APP_PASSWORD" \
+                            --wait 2>&1) || NOTARIZATION_TIMEOUT=1
+                    else
+                        NOTARIZATION_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
+                            --apple-id "$APPLE_ID" \
+                            --team-id "$TEAM_ID" \
+                            --password "$APPLE_APP_PASSWORD" \
+                            --wait 2>&1)
+                    fi
+                fi
+                
+                # Handle timeout
+                if [ -n "$NOTARIZATION_TIMEOUT" ]; then
+                    echo "⏱️  Notarization timeout (10 minutes) - continuing without notarization"
+                    echo "⚠️  You can check notarization status later with: xcrun notarytool history"
+                    NOTARIZATION_OUTPUT=""
+                fi
+                
+                if echo "$NOTARIZATION_OUTPUT" | grep -qi "status: Accepted\|accepted"; then
+                    echo "✅ Notarization successful!"
+                    
+                    # Staple the notarization ticket to the app
+                    echo "📎 Stapling notarization ticket..."
+                    xcrun stapler staple "$STAGING_DIR/$APP_BUNDLE"
+                    
+                    # Verify stapling
+                    if xcrun stapler validate "$STAGING_DIR/$APP_BUNDLE" 2>&1 | grep -q "validated"; then
+                        echo "✅ Notarization ticket stapled successfully!"
+                    else
+                        echo "⚠️  Warning: Could not verify stapling, but notarization was accepted"
+                    fi
+                elif echo "$NOTARIZATION_OUTPUT" | grep -qi "status: Invalid\|invalid"; then
+                    echo "❌ Notarization failed - Invalid!"
+                    echo "$NOTARIZATION_OUTPUT"
+                    echo "⚠️  Continuing without notarization - app will show security warning"
+                else
+                    echo "⚠️  Notarization status unclear. Output:"
+                    echo "$NOTARIZATION_OUTPUT"
+                    echo "⚠️  Continuing - you may need to check notarization status manually"
+                fi
+            fi
+            
+            # Clean up ZIP
+            rm -f "$ZIP_PATH"
+        else
+            echo ""
+            echo "⏭️  Skipping notarization as requested"
+            echo "   The app will still be signed, but may show security warnings on first launch"
+        fi
     else
         echo "⚠️  Skipping notarization - requires 'Developer ID Application' certificate"
         echo "   Current certificate: $SIGNING_IDENTITY"
@@ -258,15 +294,15 @@ echo "🔨 Creating DMG with custom layout..."
 echo "📋 DMG will contain only: $APP_BUNDLE and Applications alias"
 
 # Remove old DMG if it exists
-if [ -f "AppBuild-Dev-Cleaner.dmg" ]; then
+if [ -f "Broomie.dmg" ]; then
     echo "🗑️  Removing old DMG file..."
-    rm -f "AppBuild-Dev-Cleaner.dmg"
+    rm -f "Broomie.dmg"
 fi
 
 # Create temporary DMG first (writable)
-TEMP_DMG="AppBuild-Dev-Cleaner-temp.dmg"
+TEMP_DMG="Broomie-temp.dmg"
 create-dmg \
-  --volname "AppBuild Dev Cleaner" \
+  --volname "Broomie" \
   --window-pos 200 120 \
   --window-size 800 500 \
   --icon-size 120 \
@@ -322,15 +358,17 @@ except:
     except:
         font = ImageFont.load_default()
 
-# Draw text
-text = "Move the application to the applications folder to be installed"
+# Draw text with better visibility
+text = "Drag the application to the Applications folder to be installed"
 # Center text
 bbox = draw.textbbox((0, 0), text, font=font)
 text_width = bbox[2] - bbox[0]
 text_height = bbox[3] - bbox[1]
 x = (width - text_width) / 2
-y = height - 100
+y = height - 80
 
+# Draw text with shadow for better visibility
+draw.text((x + 2, y + 2), text, fill='gray', font=font)
 draw.text((x, y), text, fill='black', font=font)
 img.save("$BACKGROUND_DIR/background.png")
 PYTHON_SCRIPT
@@ -339,8 +377,10 @@ elif command -v convert &> /dev/null; then
     # Use ImageMagick if available
     echo "🎨 Creating background image with text using ImageMagick..."
     convert -size 800x500 xc:white \
-        -pointsize 24 -fill black -gravity south \
-        -annotate +0+100 "Move the application to the applications folder to be installed" \
+        -pointsize 26 -fill black -gravity south \
+        -annotate +0+80 "Drag the application to the Applications folder to be installed" \
+        -pointsize 24 -fill '#333333' -gravity south \
+        -annotate +2+82 "Drag the application to the Applications folder to be installed" \
         "$BACKGROUND_DIR/background.png" 2>/dev/null
     BACKGROUND_IMAGE="$BACKGROUND_DIR/background.png"
 else
@@ -376,6 +416,33 @@ tell application "Finder"
 end tell
 EOF
 
+# Verify and ensure background is set properly
+echo "🔍 Verifying background image..."
+if [ -f "$BACKGROUND_IMAGE" ]; then
+    echo "✅ Background image exists: $BACKGROUND_IMAGE"
+    # Force refresh the background
+    osascript <<EOF
+tell application "Finder"
+    tell disk "$DMG_MOUNT"
+        open
+        delay 0.5
+        try
+            set background picture of container window to file ".background:background.png"
+        end try
+        close
+        open
+        update without registering applications
+        delay 1
+        close
+    end tell
+end tell
+EOF
+else
+    echo "⚠️  Background image not found, creating text file as fallback..."
+    # Create a text file with instructions as fallback
+    echo "Drag the application to the Applications folder to be installed" > "$DMG_MOUNT/README.txt"
+fi
+
 # Add text overlay using AppleScript if background image exists
 if [ -f "$BACKGROUND_IMAGE" ]; then
     echo "✅ Background image created successfully"
@@ -388,13 +455,13 @@ hdiutil detach "$DMG_MOUNT"
 
 # Convert to read-only compressed DMG
 echo "🔒 Converting DMG to read-only format..."
-hdiutil convert "$TEMP_DMG" -format UDZO -o "AppBuild-Dev-Cleaner.dmg" -ov
+hdiutil convert "$TEMP_DMG" -format UDZO -o "Broomie.dmg" -ov
 
 # Remove temporary DMG
 rm -f "$TEMP_DMG"
 
 # Verify final DMG was created
-if [ ! -f "AppBuild-Dev-Cleaner.dmg" ]; then
+if [ ! -f "Broomie.dmg" ]; then
     echo "❌ Failed to create read-only DMG!"
     rm -rf "$STAGING_DIR"
     exit 1
@@ -403,15 +470,15 @@ fi
 echo "✅ Read-only DMG created successfully with background text"
 
 # Sign the DMG
-if [ -f "AppBuild-Dev-Cleaner.dmg" ]; then
+if [ -f "Broomie.dmg" ]; then
     echo "✍️  Signing DMG..."
     codesign --force --sign "$SIGNING_IDENTITY" \
              --timestamp \
-             "AppBuild-Dev-Cleaner.dmg"
+             "Broomie.dmg"
     
     # Verify DMG signature
     echo "🔍 Verifying DMG signature..."
-    if codesign --verify --verbose "AppBuild-Dev-Cleaner.dmg" 2>&1 | grep -q "valid on disk"; then
+    if codesign --verify --verbose "Broomie.dmg" 2>&1 | grep -q "valid on disk"; then
         echo "✅ DMG signature verified!"
     else
         echo "⚠️  DMG signature verification failed, but DMG was created."
@@ -422,9 +489,9 @@ fi
 rm -rf "$STAGING_DIR"
 
 # Show DMG location
-if [ -f "AppBuild-Dev-Cleaner.dmg" ]; then
-    DMG_PATH=$(pwd)/AppBuild-Dev-Cleaner.dmg
-    DMG_SIZE=$(du -h "AppBuild-Dev-Cleaner.dmg" | cut -f1)
+if [ -f "Broomie.dmg" ]; then
+    DMG_PATH=$(pwd)/Broomie.dmg
+    DMG_SIZE=$(du -h "Broomie.dmg" | cut -f1)
     
     echo "✅ DMG created successfully!"
     echo "📍 Location: $DMG_PATH"

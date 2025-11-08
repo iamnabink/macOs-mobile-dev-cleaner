@@ -62,7 +62,7 @@ check_submission() {
 # Function to check if an app is notarized
 check_app() {
     if [ -z "$1" ]; then
-        APP_PATH="build/macos/Build/Products/Release/AppBuild Dev Cleaner.app"
+        APP_PATH="build/macos/Build/Products/Release/Broomie.app"
         if [ ! -d "$APP_PATH" ]; then
             echo ""
             echo "📝 Please enter the path to the app bundle:"
@@ -110,7 +110,7 @@ check_app() {
 
 # Function to check DMG notarization
 check_dmg() {
-    DMG_PATH="AppBuild-Dev-Cleaner.dmg"
+    DMG_PATH="Broomie.dmg"
     if [ -n "$1" ]; then
         DMG_PATH="$1"
     fi
@@ -233,7 +233,7 @@ else
             echo "  $0 check abc123           - Check submission ID abc123"
             echo "  $0 app                    - Check built app (interactive)"
             echo "  $0 app /path/to/app.app   - Check specific app"
-            echo "  $0 dmg                    - Check AppBuild-Dev-Cleaner.dmg (interactive)"
+            echo "  $0 dmg                    - Check Broomie.dmg (interactive)"
             echo "  $0 dmg /path/to/file.dmg  - Check specific DMG"
             echo ""
             exit 1

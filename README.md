@@ -1,12 +1,12 @@
-# MacOS AppBuild Dev Cleaner - Mobile Development Artifact Cleaner
+# MacOS Broomie - Mobile Development Artifact Cleaner
 
-## 📥 Download AppBuild Dev Cleaner
+## 📥 Download Broomie
 
 <div align="center">
 
 ### 🚀 Download Latest Release
 
-[![Download AppBuild-Dev-Cleaner.dmg](https://img.shields.io/badge/⬇️%20Download-AppBuild--Dev--Cleaner.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/AppBuild-Dev-Cleaner.dmg)
+[![Download Broomie.dmg](https://img.shields.io/badge/⬇️%20Download-Broomie.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/Broomie.dmg)
 
 **✅ Safety & Security Assurance:**
 - 🔒 **Code-Signed** - The DMG file is signed with an Apple Developer ID Application certificate
@@ -17,7 +17,7 @@
 **Quick Install:**
 1. Click download button above
 2. Open the downloaded DMG file
-3. Drag **AppBuild Dev Cleaner** to your Applications folder
+3. Drag **Broomie** to your Applications folder
 4. Launch from Applications - **No security warnings!**
 
 ---
@@ -45,12 +45,12 @@ As a mobile developer working with Flutter and React Native, I constantly faced 
 - **Manual cleanup** is tedious and error-prone
 
 ### The Solution
-AppBuild Dev Cleaner automatically scans, identifies, and safely removes build artifacts (never source code), saving hours of manual cleanup work.
+Broomie automatically scans, identifies, and safely removes build artifacts (never source code), saving hours of manual cleanup work.
 
 ## Installation
 
 1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page
-2. **Open the DMG file** and drag **AppBuild Dev Cleaner** to your Applications folder
+2. **Open the DMG file** and drag **Broomie** to your Applications folder
 3. **Launch** from Applications or Spotlight
 4. **Grant permission** when prompted to access your home directory
 
@@ -272,7 +272,7 @@ spctl --assess --verbose "YourApp.app"     # Check Gatekeeper
 
 ## Made With Love
 
-**AppBuild Dev Cleaner** was created by **Nabraj Khadka** - Mobile Developer & Flutter Enthusiast
+**Broomie** was created by **Nabraj Khadka** - Mobile Developer & Flutter Enthusiast
 
 **Connect with me:**
 - 🔗 [LinkedIn](https://linkedin.com/in/iamnabink)
