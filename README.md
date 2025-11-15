@@ -2,7 +2,7 @@
 
 ## 📥 Download Broomie
 
-<div align="center">
+<div>
 
 ### 🚀 Download Latest Release
 
