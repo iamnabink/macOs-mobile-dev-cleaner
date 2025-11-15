@@ -4,8 +4,6 @@
 
 <div>
 
-### 🚀 Download Latest Release
-
 [![Download Broomie.dmg](https://img.shields.io/badge/⬇️%20Download-Broomie.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/Broomie.dmg)
 
 **✅ Safety & Security Assurance:**
