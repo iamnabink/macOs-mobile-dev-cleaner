@@ -149,7 +149,7 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          '${AppConstants.appVersion} • ${AppConstants.buildNumber}',
+                          '$_appVersionLabel • $_buildNumberLabel',
                           style: const TextStyle(
                             fontSize: 12,
                             color: CupertinoColors.label,

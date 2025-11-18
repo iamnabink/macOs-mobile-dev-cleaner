@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_cleaner/scan_result.dart';
 import 'package:flutter_cleaner/constants.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 
@@ -51,6 +52,8 @@ class _CleanerHomePageState extends State<CleanerHomePage>
 
   bool _hasPermission = false;
   String _selectedPath = '';
+  String _appVersionLabel = AppConstants.appVersion;
+  String _buildNumberLabel = AppConstants.buildNumber;
 
   @override
   void initState() {
@@ -70,6 +73,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       CurvedAnimation(parent: _progressController, curve: Curves.linear),
     );
     _checkInitialPermissions();
+    _loadAppMetadata();
   }
 
   @override
@@ -135,5 +139,18 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         ),
       ),
     );
+  }
+
+  Future<void> _loadAppMetadata() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() {
+        _appVersionLabel = 'Version ${info.version}';
+        _buildNumberLabel = 'Build ${info.buildNumber}';
+      });
+    } catch (_) {
+      // Ignore errors and fall back to default labels.
+    }
   }
 }

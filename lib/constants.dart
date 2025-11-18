@@ -90,8 +90,8 @@ class AppConstants {
   static const String developerTitle = 'Mobile Developer & Flutter Enthusiast';
   static const String linkedinUrl = 'https://linkedin.com/in/iamnabink';
   static const String githubUrl = 'https://github.com/iamnabink';
-  static const String appVersion = 'Version 1.0.0';
-  static const String buildNumber = 'Build 1';
+  static const String appVersion = 'Version --';
+  static const String buildNumber = 'Build --';
   static const String closeButton = 'Close';
 
   // File Types
