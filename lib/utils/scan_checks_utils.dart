@@ -1,4 +1,4 @@
-part of 'home.dart';
+part of '../pages/cleaner_home_page.dart';
 
 extension CleanerHomePageScanChecks on _CleanerHomePageState {
   Future<int> _countDirectories(String rootPath) async {

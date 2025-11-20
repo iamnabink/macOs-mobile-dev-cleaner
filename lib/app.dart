@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_cleaner/home.dart';
+import 'package:flutter_cleaner/pages/cleaner_home_page.dart';
 import 'package:flutter_cleaner/constants.dart';
 
 class APKBuildCleanerApp extends StatelessWidget {

@@ -1,4 +1,4 @@
-part of 'home.dart';
+part of '../pages/cleaner_home_page.dart';
 
 extension CleanerHomePageScanTraversal on _CleanerHomePageState {
   Future<void> _scanDirectory(String dirPath) async {

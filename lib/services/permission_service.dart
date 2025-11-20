@@ -1,4 +1,4 @@
-part of 'home.dart';
+part of '../pages/cleaner_home_page.dart';
 
 extension CleanerHomePagePermissions on _CleanerHomePageState {
   Future<void> _checkInitialPermissions() async {

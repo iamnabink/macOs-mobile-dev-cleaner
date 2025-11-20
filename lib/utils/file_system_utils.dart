@@ -1,4 +1,4 @@
-part of 'home.dart';
+part of '../pages/cleaner_home_page.dart';
 
 extension CleanerHomePageCoreUtils on _CleanerHomePageState {
   String _formatFileSize(int bytes) {

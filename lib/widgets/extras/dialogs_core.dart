@@ -1,4 +1,4 @@
-part of 'home.dart';
+part of '../../pages/cleaner_home_page.dart';
 
 extension CleanerHomePageDialogsCore on _CleanerHomePageState {
   Future<void> _showContextMenu(BuildContext context, ScanResult result) async {

@@ -1,28 +1,29 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_cleaner/scan_result.dart';
 import 'package:flutter_cleaner/constants.dart';
+import 'package:flutter_cleaner/scan_result.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
-import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-part 'home_utils_core.dart';
-part 'home_utils_scan_checks.dart';
-part 'home_scan_control.dart';
-part 'home_scan_traversal.dart';
-part 'home_permissions.dart';
-part 'home_clean_operations.dart';
-part 'home_widgets_actions.dart';
-part 'home_widgets_progress.dart';
-part 'home_widgets_results_summary.dart';
-part 'home_widgets_results_list.dart';
-part 'home_widgets_results_warnings.dart';
-part 'home_widgets_header.dart';
-part 'home_dialogs_core.dart';
-part 'home_dialogs_about.dart';
+part '../utils/file_system_utils.dart';
+part '../utils/scan_checks_utils.dart';
+part '../services/scan_control_service.dart';
+part '../services/directory_traversal_service.dart';
+part '../services/permission_service.dart';
+part '../services/clean_operations_service.dart';
+part '../widgets/action_buttons.dart';
+part '../widgets/progress_card.dart';
+part '../widgets/results_summary_card.dart';
+part '../widgets/results_list.dart';
+part '../widgets/results_warnings.dart';
+part '../widgets/header_section.dart';
+part '../widgets/extras/dialogs_core.dart';
+part '../widgets/extras/dialogs_about.dart';
 
 class CleanerHomePage extends StatefulWidget {
   const CleanerHomePage({Key? key}) : super(key: key);
