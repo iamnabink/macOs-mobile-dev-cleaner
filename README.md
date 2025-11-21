@@ -4,6 +4,8 @@
 
 <div>
 
+[![Download on the Mac App Store](https://tools.applemediaservices.com/api/badges/download-on-the-mac-app-store/black/en-us?size=250x83&releaseDate=1733011200)](https://apps.apple.com/us/app/broomie-appbuild-dev-cleaner/id6755060683?mt=12)
+
 [![Download Broomie.dmg](https://img.shields.io/badge/⬇️%20Download-Broomie.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/Broomie.dmg)
 
 **✅ Safety & Security Assurance:**
@@ -13,7 +15,14 @@
 - ✨ **Verified** - The app bundle and DMG are both signed and verified
 
 **Quick Install:**
-1. Click download button above
+
+**Option 1 - Mac App Store (Recommended):**
+1. Click the "Download on the Mac App Store" button above
+2. Install directly from the App Store
+3. Launch from Applications or Spotlight
+
+**Option 2 - Direct Download (DMG):**
+1. Click the "Download Broomie.dmg" button above
 2. Open the downloaded DMG file
 3. Drag **Broomie** to your Applications folder
 4. Launch from Applications - **No security warnings!**
@@ -47,7 +56,14 @@ Broomie automatically scans, identifies, and safely removes build artifacts (nev
 
 ## Installation
 
-1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page
+**From Mac App Store (Recommended):**
+1. Click the "Download on the Mac App Store" button at the top
+2. Install directly from the App Store
+3. Launch from Applications or Spotlight
+4. **Grant permission** when prompted to access your home directory
+
+**Direct Download (DMG):**
+1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page or click the DMG download button at the top
 2. **Open the DMG file** and drag **Broomie** to your Applications folder
 3. **Launch** from Applications or Spotlight
 4. **Grant permission** when prompted to access your home directory
